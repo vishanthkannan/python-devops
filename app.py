@@ -14,7 +14,7 @@ def home():
 body {
     margin: 0;
     overflow: hidden;
-    background: radial-gradient(circle at center, #080808, #000000 70%);
+    background: black(circle at center, #080808, #000000 70%);
     font-family: Arial, sans-serif;
     color: black;
 }
