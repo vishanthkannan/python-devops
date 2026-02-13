@@ -14,7 +14,7 @@ def home():
 body {
     margin: 0;
     overflow: hidden;
-    background: radial-gradient(circle at center, #000010, #000);
+    background: radial-gradient(circle at center, #050510, #000000);
     font-family: Arial, sans-serif;
     color: white;
 }
@@ -35,13 +35,15 @@ canvas {
 }
 
 h1 {
-    font-size: 60px;
-    letter-spacing: 4px;
+    font-size: 64px;
+    margin: 0;
+    letter-spacing: 3px;
 }
 
 p {
-    color: #ccc;
+    margin-top: 15px;
     font-size: 18px;
+    color: #bbbbbb;
 }
 </style>
 </head>
@@ -52,7 +54,7 @@ p {
 
 <div class="content">
     <h1>Python DevOps</h1>
-    <p>Deployed using Flask + Docker + Jenkins + AWS</p>
+    <p>Deployed using Flask, Docker, Jenkins and AWS</p>
 </div>
 
 <script>
@@ -73,36 +75,35 @@ document.addEventListener("mousemove", (e) => {
 let stars = [];
 let planets = [];
 
-for (let i = 0; i < 250; i++) {
+for (let i = 0; i < 400; i++) {
     stars.push({
         x: Math.random() * canvas.width,
         y: Math.random() * canvas.height,
-        radius: Math.random() * 2,
-        depth: Math.random() * 2 + 0.5
+        radius: Math.random() * 1.5,
+        depth: Math.random() * 3
     });
 }
 
 planets.push({
-    x: canvas.width * 0.2,
-    y: canvas.height * 0.3,
-    radius: 40,
+    x: canvas.width * 0.25,
+    y: canvas.height * 0.35,
+    radius: 50,
     color: "#4fc3f7"
 });
 
 planets.push({
-    x: canvas.width * 0.8,
-    y: canvas.height * 0.7,
-    radius: 60,
+    x: canvas.width * 0.75,
+    y: canvas.height * 0.65,
+    radius: 70,
     color: "#ff4081"
 });
 
 function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    // Stars with parallax
     stars.forEach(star => {
-        let dx = (mouseX - canvas.width/2) * 0.0005 * star.depth;
-        let dy = (mouseY - canvas.height/2) * 0.0005 * star.depth;
+        let dx = (mouseX - canvas.width / 2) * 0.001 * star.depth;
+        let dy = (mouseY - canvas.height / 2) * 0.001 * star.depth;
 
         ctx.beginPath();
         ctx.arc(star.x + dx, star.y + dy, star.radius, 0, Math.PI * 2);
@@ -110,18 +111,20 @@ function draw() {
         ctx.fill();
     });
 
-    // Floating planets
     planets.forEach(planet => {
         ctx.beginPath();
         ctx.arc(
-            planet.x + Math.sin(Date.now()*0.001)*20,
-            planet.y + Math.cos(Date.now()*0.001)*20,
+            planet.x + Math.sin(Date.now() * 0.0008) * 20,
+            planet.y + Math.cos(Date.now() * 0.0008) * 20,
             planet.radius,
             0,
             Math.PI * 2
         );
         ctx.fillStyle = planet.color;
+        ctx.shadowBlur = 30;
+        ctx.shadowColor = planet.color;
         ctx.fill();
+        ctx.shadowBlur = 0;
     });
 
     requestAnimationFrame(draw);
