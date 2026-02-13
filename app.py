@@ -50,7 +50,7 @@ def home():
 
         <canvas id="galaxy"></canvas>
 
-        <h1>Python DevOps </h1>
+        <h1>Python DevOps 🚀</h1>
         <p>Deployed using Flask + Docker + Jenkins + AWS</p>
 
         <script>
