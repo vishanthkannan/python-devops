@@ -5,127 +5,103 @@ app = Flask(__name__)
 @app.route("/")
 def home():
     return """
-<!DOCTYPE html>
-<html>
-<head>
-<title>Python DevOps</title>
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>Python DevOps</title>
 
-<style>
-body {
-    margin: 0;
-    overflow: hidden;
-    background: black(circle at center, #080808, #000000 70%);
-    font-family: Arial, sans-serif;
-    color: black;
-}
+        <style>
+            body {
+                margin: 0;
+                height: 100vh;
+                overflow: hidden;
+                background: #000;
+                color: white;
+                font-family: Arial, sans-serif;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                flex-direction: column;
+                text-align: center;
+            }
 
-canvas {
-    position: absolute;
-    top: 0;
-    left: 0;
-}
+            h1 {
+                font-size: 60px;
+                letter-spacing: 4px;
+                z-index: 10;
+            }
 
-.content {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    text-align: center;
-    z-index: 10;
-}
+            p {
+                font-size: 18px;
+                color: #ccc;
+                z-index: 10;
+            }
 
-h1 {
-    font-size: 64px;
-    letter-spacing: 4px;
-    margin: 0;
-}
+            canvas {
+                position: absolute;
+                top: 0;
+                left: 0;
+                z-index: 1;
+            }
+        </style>
+    </head>
 
-p {
-    margin-top: 15px;
-    font-size: 18px;
-    color: #cccccc;
-}
+    <body>
 
-.cursor-glow {
-    position: absolute;
-    width: 200px;
-    height: 200px;
-    border-radius: 50%;
-    pointer-events: none;
-    background: radial-gradient(circle, rgba(255,215,0,0.4) 0%, rgba(255,215,0,0.15) 40%, transparent 70%);
-    transform: translate(-50%, -50%);
-    z-index: 5;
-}
-</style>
-</head>
+        <canvas id="galaxy"></canvas>
 
-<body>
+        <h1>Python DevOps 🚀</h1>
+        <p>Deployed using Flask + Docker + Jenkins + AWS</p>
 
-<canvas id="space"></canvas>
-<div class="cursor-glow" id="cursorGlow"></div>
+        <script>
+            const canvas = document.getElementById("galaxy");
+            const ctx = canvas.getContext("2d");
 
-<div class="content">
-    <h1>Python DevOps</h1>
-    <p>Deployed using Flask, Docker, Jenkins and AWS</p>
-</div>
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
 
-<script>
-const canvas = document.getElementById("space");
-const ctx = canvas.getContext("2d");
-const glow = document.getElementById("cursorGlow");
+            let stars = [];
 
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
+            for (let i = 0; i < 200; i++) {
+                stars.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    radius: Math.random() * 2,
+                    speed: Math.random() * 0.5
+                });
+            }
 
-let mouseX = canvas.width / 2;
-let mouseY = canvas.height / 2;
+            function drawStars() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-document.addEventListener("mousemove", (e) => {
-    mouseX = e.clientX;
-    mouseY = e.clientY;
+                ctx.fillStyle = "white";
+                stars.forEach(star => {
+                    ctx.beginPath();
+                    ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
+                    ctx.fill();
 
-    glow.style.left = mouseX + "px";
-    glow.style.top = mouseY + "px";
-});
+                    star.y += star.speed;
 
-let stars = [];
+                    if (star.y > canvas.height) {
+                        star.y = 0;
+                        star.x = Math.random() * canvas.width;
+                    }
+                });
 
-for (let i = 0; i < 500; i++) {
-    stars.push({
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height,
-        radius: Math.random() * 1.5,
-        depth: Math.random() * 3
-    });
-}
+                requestAnimationFrame(drawStars);
+            }
 
-function draw() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+            drawStars();
 
-    stars.forEach(star => {
-        let dx = (mouseX - canvas.width / 2) * 0.0015 * star.depth;
-        let dy = (mouseY - canvas.height / 2) * 0.0015 * star.depth;
+            window.addEventListener("resize", () => {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            });
+        </script>
 
-        ctx.beginPath();
-        ctx.arc(star.x + dx, star.y + dy, star.radius, 0, Math.PI * 2);
-        ctx.fillStyle = "#FFD700";  // Golden color
-        ctx.fill();
-    });
+    </body>
+    </html>
+    """
 
-    requestAnimationFrame(draw);
-}
-
-draw();
-
-window.addEventListener("resize", () => {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-});
-</script>
-
-</body>
-</html>
-"""
-    
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
