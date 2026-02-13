@@ -14,9 +14,9 @@ def home():
 body {
     margin: 0;
     overflow: hidden;
-    background: radial-gradient(circle at center, #050510, #000000);
+    background: radial-gradient(circle at center, #080808, #000000 70%);
     font-family: Arial, sans-serif;
-    color: black;
+    color: white;
 }
 
 canvas {
@@ -36,14 +36,25 @@ canvas {
 
 h1 {
     font-size: 64px;
+    letter-spacing: 4px;
     margin: 0;
-    letter-spacing: 3px;
 }
 
 p {
     margin-top: 15px;
     font-size: 18px;
-    color: #bbbbbb;
+    color: #cccccc;
+}
+
+.cursor-glow {
+    position: absolute;
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    pointer-events: none;
+    background: radial-gradient(circle, rgba(255,215,0,0.4) 0%, rgba(255,215,0,0.15) 40%, transparent 70%);
+    transform: translate(-50%, -50%);
+    z-index: 5;
 }
 </style>
 </head>
@@ -51,6 +62,7 @@ p {
 <body>
 
 <canvas id="space"></canvas>
+<div class="cursor-glow" id="cursorGlow"></div>
 
 <div class="content">
     <h1>Python DevOps</h1>
@@ -60,6 +72,7 @@ p {
 <script>
 const canvas = document.getElementById("space");
 const ctx = canvas.getContext("2d");
+const glow = document.getElementById("cursorGlow");
 
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
@@ -70,12 +83,14 @@ let mouseY = canvas.height / 2;
 document.addEventListener("mousemove", (e) => {
     mouseX = e.clientX;
     mouseY = e.clientY;
+
+    glow.style.left = mouseX + "px";
+    glow.style.top = mouseY + "px";
 });
 
 let stars = [];
-let planets = [];
 
-for (let i = 0; i < 400; i++) {
+for (let i = 0; i < 500; i++) {
     stars.push({
         x: Math.random() * canvas.width,
         y: Math.random() * canvas.height,
@@ -84,47 +99,17 @@ for (let i = 0; i < 400; i++) {
     });
 }
 
-planets.push({
-    x: canvas.width * 0.25,
-    y: canvas.height * 0.35,
-    radius: 50,
-    color: "#4fc3f7"
-});
-
-planets.push({
-    x: canvas.width * 0.75,
-    y: canvas.height * 0.65,
-    radius: 70,
-    color: "#ff4081"
-});
-
 function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     stars.forEach(star => {
-        let dx = (mouseX - canvas.width / 2) * 0.001 * star.depth;
-        let dy = (mouseY - canvas.height / 2) * 0.001 * star.depth;
+        let dx = (mouseX - canvas.width / 2) * 0.0015 * star.depth;
+        let dy = (mouseY - canvas.height / 2) * 0.0015 * star.depth;
 
         ctx.beginPath();
         ctx.arc(star.x + dx, star.y + dy, star.radius, 0, Math.PI * 2);
-        ctx.fillStyle = "white";
+        ctx.fillStyle = "#FFD700";  // Golden color
         ctx.fill();
-    });
-
-    planets.forEach(planet => {
-        ctx.beginPath();
-        ctx.arc(
-            planet.x + Math.sin(Date.now() * 0.0008) * 20,
-            planet.y + Math.cos(Date.now() * 0.0008) * 20,
-            planet.radius,
-            0,
-            Math.PI * 2
-        );
-        ctx.fillStyle = planet.color;
-        ctx.shadowBlur = 30;
-        ctx.shadowColor = planet.color;
-        ctx.fill();
-        ctx.shadowBlur = 0;
     });
 
     requestAnimationFrame(draw);
@@ -141,6 +126,6 @@ window.addEventListener("resize", () => {
 </body>
 </html>
 """
-
+    
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
