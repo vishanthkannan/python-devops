@@ -16,7 +16,7 @@ body {
     overflow: hidden;
     background: radial-gradient(circle at center, #080808, #000000 70%);
     font-family: Arial, sans-serif;
-    color: white;
+    color: black;
 }
 
 canvas {
