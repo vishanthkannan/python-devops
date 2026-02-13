@@ -14,67 +14,88 @@ def home():
             body {
                 margin: 0;
                 height: 100vh;
-                background: radial-gradient(circle at center, #111, #000);
+                overflow: hidden;
+                background: #000;
                 color: white;
+                font-family: Arial, sans-serif;
                 display: flex;
                 justify-content: center;
                 align-items: center;
                 flex-direction: column;
-                font-family: Arial, sans-serif;
-                overflow: hidden;
+                text-align: center;
             }
 
             h1 {
                 font-size: 60px;
-                margin: 0;
-                letter-spacing: 3px;
+                letter-spacing: 4px;
+                z-index: 10;
             }
 
             p {
-                margin-top: 10px;
                 font-size: 18px;
                 color: #ccc;
+                z-index: 10;
             }
 
-            .spark {
+            canvas {
                 position: absolute;
-                width: 15px;
-                height: 15px;
-                background: radial-gradient(circle, #00f2ff, transparent);
-                border-radius: 50%;
-                pointer-events: none;
-                animation: fadeOut 0.8s linear forwards;
-            }
-
-            @keyframes fadeOut {
-                0% {
-                    transform: scale(1);
-                    opacity: 1;
-                }
-                100% {
-                    transform: scale(3);
-                    opacity: 0;
-                }
+                top: 0;
+                left: 0;
+                z-index: 1;
             }
         </style>
     </head>
 
     <body>
 
-        <h1>Python DevOps</h1>
+        <canvas id="galaxy"></canvas>
+
+        <h1>Python DevOps </h1>
         <p>Deployed using Flask + Docker + Jenkins + AWS</p>
 
         <script>
-            document.addEventListener("mousemove", function(e) {
-                const spark = document.createElement("div");
-                spark.className = "spark";
-                spark.style.left = e.pageX + "px";
-                spark.style.top = e.pageY + "px";
-                document.body.appendChild(spark);
+            const canvas = document.getElementById("galaxy");
+            const ctx = canvas.getContext("2d");
 
-                setTimeout(() => {
-                    spark.remove();
-                }, 800);
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            let stars = [];
+
+            for (let i = 0; i < 200; i++) {
+                stars.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    radius: Math.random() * 2,
+                    speed: Math.random() * 0.5
+                });
+            }
+
+            function drawStars() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                ctx.fillStyle = "white";
+                stars.forEach(star => {
+                    ctx.beginPath();
+                    ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
+                    ctx.fill();
+
+                    star.y += star.speed;
+
+                    if (star.y > canvas.height) {
+                        star.y = 0;
+                        star.x = Math.random() * canvas.width;
+                    }
+                });
+
+                requestAnimationFrame(drawStars);
+            }
+
+            drawStars();
+
+            window.addEventListener("resize", () => {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
             });
         </script>
 
