@@ -5,103 +5,139 @@ app = Flask(__name__)
 @app.route("/")
 def home():
     return """
-    <!DOCTYPE html>
-    <html>
-    <head>
-        <title>Python DevOps</title>
+<!DOCTYPE html>
+<html>
+<head>
+<title>Python DevOps</title>
 
-        <style>
-            body {
-                margin: 0;
-                height: 100vh;
-                overflow: hidden;
-                background: #000;
-                color: white;
-                font-family: Arial, sans-serif;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                flex-direction: column;
-                text-align: center;
-            }
+<style>
+body {
+    margin: 0;
+    overflow: hidden;
+    background: radial-gradient(circle at center, #000010, #000);
+    font-family: Arial, sans-serif;
+    color: white;
+}
 
-            h1 {
-                font-size: 60px;
-                letter-spacing: 4px;
-                z-index: 10;
-            }
+canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+}
 
-            p {
-                font-size: 18px;
-                color: #ccc;
-                z-index: 10;
-            }
+.content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    z-index: 10;
+}
 
-            canvas {
-                position: absolute;
-                top: 0;
-                left: 0;
-                z-index: 1;
-            }
-        </style>
-    </head>
+h1 {
+    font-size: 60px;
+    letter-spacing: 4px;
+}
 
-    <body>
+p {
+    color: #ccc;
+    font-size: 18px;
+}
+</style>
+</head>
 
-        <canvas id="galaxy"></canvas>
+<body>
 
-        <h1>Python DevOps </h1>
-        <p>Deployed using Flask + Docker + Jenkins + AWS</p>
+<canvas id="space"></canvas>
 
-        <script>
-            const canvas = document.getElementById("galaxy");
-            const ctx = canvas.getContext("2d");
+<div class="content">
+    <h1>Python DevOps</h1>
+    <p>Deployed using Flask + Docker + Jenkins + AWS</p>
+</div>
 
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
+<script>
+const canvas = document.getElementById("space");
+const ctx = canvas.getContext("2d");
 
-            let stars = [];
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
 
-            for (let i = 0; i < 200; i++) {
-                stars.push({
-                    x: Math.random() * canvas.width,
-                    y: Math.random() * canvas.height,
-                    radius: Math.random() * 2,
-                    speed: Math.random() * 0.5
-                });
-            }
+let mouseX = canvas.width / 2;
+let mouseY = canvas.height / 2;
 
-            function drawStars() {
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
+document.addEventListener("mousemove", (e) => {
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+});
 
-                ctx.fillStyle = "white";
-                stars.forEach(star => {
-                    ctx.beginPath();
-                    ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
-                    ctx.fill();
+let stars = [];
+let planets = [];
 
-                    star.y += star.speed;
+for (let i = 0; i < 250; i++) {
+    stars.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        radius: Math.random() * 2,
+        depth: Math.random() * 2 + 0.5
+    });
+}
 
-                    if (star.y > canvas.height) {
-                        star.y = 0;
-                        star.x = Math.random() * canvas.width;
-                    }
-                });
+planets.push({
+    x: canvas.width * 0.2,
+    y: canvas.height * 0.3,
+    radius: 40,
+    color: "#4fc3f7"
+});
 
-                requestAnimationFrame(drawStars);
-            }
+planets.push({
+    x: canvas.width * 0.8,
+    y: canvas.height * 0.7,
+    radius: 60,
+    color: "#ff4081"
+});
 
-            drawStars();
+function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-            window.addEventListener("resize", () => {
-                canvas.width = window.innerWidth;
-                canvas.height = window.innerHeight;
-            });
-        </script>
+    // Stars with parallax
+    stars.forEach(star => {
+        let dx = (mouseX - canvas.width/2) * 0.0005 * star.depth;
+        let dy = (mouseY - canvas.height/2) * 0.0005 * star.depth;
 
-    </body>
-    </html>
-    """
+        ctx.beginPath();
+        ctx.arc(star.x + dx, star.y + dy, star.radius, 0, Math.PI * 2);
+        ctx.fillStyle = "white";
+        ctx.fill();
+    });
+
+    // Floating planets
+    planets.forEach(planet => {
+        ctx.beginPath();
+        ctx.arc(
+            planet.x + Math.sin(Date.now()*0.001)*20,
+            planet.y + Math.cos(Date.now()*0.001)*20,
+            planet.radius,
+            0,
+            Math.PI * 2
+        );
+        ctx.fillStyle = planet.color;
+        ctx.fill();
+    });
+
+    requestAnimationFrame(draw);
+}
+
+draw();
+
+window.addEventListener("resize", () => {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+});
+</script>
+
+</body>
+</html>
+"""
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
